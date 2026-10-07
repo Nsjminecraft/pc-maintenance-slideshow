@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PC Maintenance Assignment - Disassembly & Reassembly</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    overflow: hidden;
+    height: 100vh;
+  }
+  .slideshow {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+  }
+  .slide {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    padding: 40px 60px;
+    overflow-y: auto;
+    animation: fadeIn 0.4s ease;
+  }
+  .slide.active { display: flex; flex-direction: column; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slide-header {
+    background: linear-gradient(135deg, #16213e, #0f3460);
+    padding: 30px 40px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border-left: 5px solid #e94560;
+  }
+  .slide-header h1 {
+    font-size: 2.5em;
+    color: #e94560;
+    margin-bottom: 10px;
+  }
+  .slide-header h2 {
+    font-size: 1.8em;
+    color: #fff;
+  }
+  .slide-header p {
+    font-size: 1.1em;
+    color: #ccc;
+    margin-top: 8px;
+  }
+  .content {
+    flex: 1;
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+  }
+  .text-content {
+    flex: 1;
+    background: #16213e;
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid #0f3460;
+  }
+  .text-content h3 {
+    color: #e94560;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+  }
+  .text-content ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .text-content li {
+    padding: 8px 0;
+    padding-left: 25px;
+    position: relative;
+    line-height: 1.6;
+  }
+  .text-content li:before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #e94560;
+  }
+  .image-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+    min-height: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .image-container img {
+    max-width: 100%;
+    max-height: 46vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .image-placeholder {
+    width: 100%;
+    height: 400px;
+    border: 3px dashed #0f3460;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 1.1em;
+    text-align: center;
+    padding: 20px;
+  }
+  .nav {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    background: rgba(22, 33, 62, 0.95);
+    padding: 15px 30px;
+    border-radius: 50px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    z-index: 100;
+  }
+  .nav button {
+    background: #e94560;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+  .nav button:hover {
+    background: #ff6b6b;
+    transform: scale(1.05);
+  }
+  .nav button:disabled {
+    background: #333;
+    cursor: not-allowed;
+    transform: scale(1);
+  }
+  .slide-counter {
+    color: #ccc;
+    font-size: 1em;
+    min-width: 80px;
+    text-align: center;
+  }
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
+  .title-slide h1 {
+    font-size: 3.5em;
+    color: #e94560;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  .title-slide h2 {
+    font-size: 2em;
+    color: #fff;
+    margin-bottom: 30px;
+  }
+  .title-slide p {
+    font-size: 1.3em;
+    color: #ccc;
+    margin: 10px 0;
+  }
+  .safety-box {
+    background: #2d1f3d;
+    border-left: 4px solid #e94560;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 5px;
+  }
+  .safety-box h4 {
+    color: #e94560;
+    margin-bottom: 10px;
+  }
+  .component-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+  }
+  .component-item {
+    background: #0f3460;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid #e94560;
+  }
+  .component-item strong {
+    color: #e94560;
+    display: block;
+    margin-bottom: 5px;
+  }
+  .step-number {
+    display: inline-block;
+    background: #e94560;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px;
+    margin-right: 10px;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+<div class="slideshow">
+
+  <div class="slide title-slide active">
+    <h1>PC Maintenance Assignment</h1>
+    <h2>Disassembly & Reassembly of HP Compact SFF</h2>
+    <p>Grade 11 - Computer Engineering</p>
+    <p style="margin-top: 40px; font-size: 1em; color: #888;">Use arrow keys or buttons to navigate</p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Project Overview</h2>
+      <p>HP Compact Small Form Factor PC</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>Learning Objectives</h3>
+        <ul>
+          <li>Identify major internal PC components and their functions</li>
+          <li>Apply proper safety procedures including ESD precautions</li>
+          <li>Safely disassemble and reassemble a desktop computer</li>
+          <li>Demonstrate proper cable management and component handling</li>
+          <li>Use clear technical language when describing components and steps</li>
+        </ul>
+        <h3 style="margin-top: 20px;">Computer Specifications</h3>
+        <ul>
+          <li><strong>Make/Model:</strong> HP Compact SFF</li>
+          <li><strong>Case Type:</strong> Small Form Factor</li>
+          <li><strong>Components:</strong> Motherboard, CPU, RAM, PSU, Storage, Expansion cards</li>
+        </ul>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_141327565.jpg" alt="Closed HP Compact SFF tower standing on the lab table">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Safety Precautions</h2>
+      <p>Essential safety measures before starting</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>5 Critical Safety Considerations</h3>
+        <div class="safety-box">
+          <h4><span class="step-number">1</span>ESD Protection</h4>
+          <p>Wear an anti-static wrist strap connected to ground to prevent electrostatic discharge that can damage sensitive components.</p>
+        </div>
+        <div class="safety-box">
+          <h4><span class="step-number">2</span>Power Disconnection</h4>
+          <p>Ensure the PC is completely powered down and unplugged from the wall outlet. Press power button to discharge residual electricity.</p>
+        </div>
+        <div class="safety-box">
+          <h4><span class="step-number">3</span>Proper Tool Usage</h4>
+          <p>Use magnetic-tipped screwdrivers and appropriate tools. Never force components - if something doesn't fit, check alignment.</p>
+        </div>
+        <div class="safety-box">
+          <h4><span class="step-number">4</span>Component Handling</h4>
+          <p>Handle components by edges only. Never touch circuit boards, gold contacts, or pins. Place parts on anti-static mats.</p>
+        </div>
+        <div class="safety-box">
+          <h4><span class="step-number">5</span>Workspace Organization</h4>
+          <p>Maintain clean, well-lit workspace. Use labeled containers for screws. Keep cables organized and avoid tripping hazards.</p>
+        </div>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/IMG_4097.jpg" alt="Working inside the open chassis with a screwdriver, removed drives laid out on the desk">
+        <img src="Documents/ProjectImages/slide/PXL_20261001_141520260.jpg" alt="Organized workspace: removed PSU, RAM modules, and SATA cables laid out on the bench">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Step 1: Initial Observation</h2>
+      <p>Before opening the case</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>What to Document</h3>
+        <ul>
+          <li>Record the computer's make and model: HP Compact SFF</li>
+          <li>Observe the case layout and external ports</li>
+          <li>Note screw locations on the case exterior</li>
+          <li>Identify any missing, damaged, or unusual components</li>
+          <li>Take a photo of the PC before opening</li>
+        </ul>
+        <h3 style="margin-top: 20px;">External Ports Identified</h3>
+        <div class="component-grid">
+          <div class="component-item"><strong>Audio Ports</strong>3.5mm jacks for speakers/headphones</div>
+          <div class="component-item"><strong>USB Ports</strong>Multiple USB 2.0/3.0 connections</div>
+          <div class="component-item"><strong>VGA Port</strong>Video output for monitors</div>
+          <div class="component-item"><strong>PS/2 Ports</strong>Keyboard and mouse connections</div>
+          <div class="component-item"><strong>Ethernet</strong>Network connection (RJ-45)</div>
+          <div class="component-item"><strong>Serial/Parallel</strong>Legacy ports (if present)</div>
+        </div>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_141338179.jpg" alt="Rear panel: expansion slots, legacy ports, PSU grille and power inlet">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_141927112.jpg" alt="Case asset and service labels with part number">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Step 2: Opening the Case</h2>
+      <p>Removing the side panel</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>Procedure</h3>
+        <ul>
+          <li><span class="step-number">1</span>Power down and unplug all cables</li>
+          <li><span class="step-number">2</span>Locate and remove side panel screws</li>
+          <li><span class="step-number">3</span>Store screws in labeled ziplock bag</li>
+          <li><span class="step-number">4</span>Carefully slide off the side panel</li>
+          <li><span class="step-number">5</span>Ensure no cables are pulled or stressed</li>
+          <li><span class="step-number">6</span>Take photo of the interior</li>
+        </ul>
+        <h3 style="margin-top: 20px;">Important Notes</h3>
+        <div class="safety-box">
+          <p><strong>SFF Case Specific:</strong> HP Compact SFF cases may have tool-less side panels or require specific screw removal. Check for release latches before forcing.</p>
+        </div>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_133540283.jpg" alt="First interior view with side panel removed: motherboard, CPU heatsink, empty RAM slots">
+        <img src="Documents/ProjectImages/slide/PXL_20261005_133140529.jpg" alt="Opened case lying flat, top-down view of motherboard, HDD bay and heatsink">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Step 3: Component Identification</h2>
+      <p>Locating and labeling internal components</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>Major Components to Identify</h3>
+        <div class="component-grid">
+          <div class="component-item"><strong>Motherboard</strong>Main circuit board connecting all components</div>
+          <div class="component-item"><strong>CPU + Cooler</strong>Central processor with heatsink/fan assembly</div>
+          <div class="component-item"><strong>RAM Modules</strong>Memory sticks in DIMM slots</div>
+          <div class="component-item"><strong>Power Supply (PSU)</strong>Converts AC to DC power</div>
+          <div class="component-item"><strong>Storage Devices</strong>HDD/SSD for data storage</div>
+          <div class="component-item"><strong>Graphics Card</strong>GPU (if present) in PCIe slot</div>
+          <div class="component-item"><strong>Expansion Cards</strong>Additional cards (network, sound, etc.)</div>
+          <div class="component-item"><strong>CMOS Battery</strong>Small round battery for BIOS settings</div>
+          <div class="component-item"><strong>Case Fans</strong>Cooling fans for airflow</div>
+          <div class="component-item"><strong>Optical Drive</strong>CD/DVD drive (if present)</div>
+        </div>
+        <h3 style="margin-top: 20px;">Cables to Identify</h3>
+        <ul>
+          <li>SATA cables (data) and SATA power cables</li>
+          <li>24-pin motherboard power connector</li>
+          <li>CPU 8-pin power connector</li>
+          <li>Front panel connectors (power switch, USB, audio)</li>
+        </ul>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_141107417.jpg" alt="Overhead view of full interior: optical drive, PSU, motherboard, heatsink, air duct">
+        <img src="Documents/ProjectImages/slide/PXL_20261005_133331635.jpg" alt="Top-down: motherboard with CPU heatsink, DIMM slots, routed cables, PSU at bottom">
+        <img src="Documents/ProjectImages/slide/PXL_20261005_133226069.jpg" alt="Interior from above showing power cables, heatsink and HDD in drive bay">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Step 4: Disassembly Process</h2>
+      <p>Systematic removal of components</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>Disassembly Order</h3>
+        <ul>
+          <li><span class="step-number">1</span>Disconnect all power cables from components</li>
+          <li><span class="step-number">2</span>Disconnect SATA/data cables</li>
+          <li><span class="step-number">3</span>Remove GPU/expansion cards (unclip and unscrew)</li>
+          <li><span class="step-number">4</span>Remove RAM modules (release tabs on both sides)</li>
+          <li><span class="step-number">5</span>Remove storage devices (unscrew and slide out)</li>
+          <li><span class="step-number">6</span>Remove case fans if required</li>
+          <li><span class="step-number">7</span>Remove CPU cooler (twist pins or unscrew)</li>
+          <li><span class="step-number">8</span>Remove CPU (lift lever, handle by edges, no bending pins)</li>
+          <li><span class="step-number">9</span>Remove motherboard (unscrew standoffs, lift carefully)</li>
+        </ul>
+        <div class="safety-box">
+          <h4>Critical Reminders</h4>
+          <ul>
+            <li>Label all screws and keep organized by component</li>
+            <li>Never force components - check for missed screws or clips</li>
+            <li>Place parts on anti-static mat or labeled tray</li>
+            <li>Take photos throughout the process</li>
+          </ul>
+        </div>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_133549099.jpg" alt="Holding the removed power supply unit above the open chassis">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_133643965.jpg" alt="Removing the 3.5-inch hard drive from the drive cage">
+        <img src="Documents/ProjectImages/slide/PXL_20261005_133202304.jpg" alt="Hand holding a removed RAM DIMM module">
+        <img src="Documents/ProjectImages/slide/PXL_20261001_142118505.jpg" alt="Lifting the fully removed motherboard out of the emptied chassis">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Step 5: Cleaning & Maintenance</h2>
+      <p>CPU cleaning and thermal paste application</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>Cleaning the CPU and Heatsink</h3>
+        <ul>
+          <li><span class="step-number">1</span>Use isopropyl alcohol (90% or higher) and lint-free cloth</li>
+          <li><span class="step-number">2</span>Gently wipe old thermal paste from CPU surface</li>
+          <li><span class="step-number">3</span>Clean the heatsink contact surface</li>
+          <li><span class="step-number">4</span>Allow both surfaces to dry completely</li>
+        </ul>
+        <h3 style="margin-top: 20px;">Applying Thermal Paste</h3>
+        <ul>
+          <li><span class="step-number">1</span>Apply small pea-sized amount to center of CPU</li>
+          <li><span class="step-number">2</span>Do not spread manually - heatsink will distribute it</li>
+          <li><span class="step-number">3</span>Too much paste can cause mess and reduce effectiveness</li>
+          <li><span class="step-number">4</span>Too little paste can cause overheating</li>
+        </ul>
+        <div class="safety-box">
+          <h4>Why Thermal Paste Matters</h4>
+          <p>Thermal paste fills microscopic gaps between CPU and heatsink, ensuring efficient heat transfer. Without it, the CPU can overheat and throttle performance or shut down.</p>
+        </div>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/IMG_4096.jpg" alt="Removed CPU showing dried, flaky old thermal paste on the heat spreader">
+        <img src="Documents/ProjectImages/slide/IMG_4120.jpg" alt="Cleaned CPU heatsink lying contact-plate-up on the desk">
+        <img src="Documents/ProjectImages/slide/IMG_4121.jpg" alt="Fresh pea-sized dot of thermal paste applied to the center of the CPU">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Step 6: Reassembly Process</h2>
+      <p>Putting it all back together</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>Reassembly Order (Reverse of Disassembly)</h3>
+        <ul>
+          <li><span class="step-number">1</span>Install motherboard onto standoffs (align I/O shield)</li>
+          <li><span class="step-number">2</span>Install CPU (match alignment triangle, zero insertion force)</li>
+          <li><span class="step-number">3</span>Apply thermal paste (pea-sized amount)</li>
+          <li><span class="step-number">4</span>Attach CPU cooler (secure evenly, connect fan power)</li>
+          <li><span class="step-number">5</span>Insert RAM into correct DIMM slots (listen for click)</li>
+          <li><span class="step-number">6</span>Install storage devices (secure with screws)</li>
+          <li><span class="step-number">7</span>Install GPU/expansion cards (seat firmly in PCIe slot)</li>
+          <li><span class="step-number">8</span>Connect all power cables (24-pin, CPU 8-pin, GPU power, SATA power)</li>
+          <li><span class="step-number">9</span>Connect SATA/data cables to motherboard and drives</li>
+          <li><span class="step-number">10</span>Reconnect front panel connectors (power switch, USB, audio)</li>
+          <li><span class="step-number">11</span>Manage cables (zip ties, no fan obstruction)</li>
+          <li><span class="step-number">12</span>Reinstall case panels</li>
+        </ul>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/PXL_20261001_143023175.jpg" alt="Inserting the CMOS coin battery into its motherboard socket during reassembly">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_133707962.jpg" alt="Seating the PSU back into the chassis with power connector plugged in">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_140825802.jpg" alt="Optical drive seated, CPU heatsink with copper heat pipe, RAM installed, air duct in place">
+        <img src="Documents/ProjectImages/slide/PXL_20261005_133450272.jpg" alt="Reconnecting cables inside the open case with a screwdriver">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Step 7: Cable Management</h2>
+      <p>Proper cable routing and organization</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>Cable Management Best Practices</h3>
+        <ul>
+          <li><strong>Plan the route:</strong> Identify where each cable needs to go before connecting</li>
+          <li><strong>Use cable ties:</strong> Bundle cables together and secure to case</li>
+          <li><strong>Avoid fan obstruction:</strong> Keep cables away from fan blades</li>
+          <li><strong>Separate power and data:</strong> Keep SATA cables away from power cables when possible</li>
+          <li><strong>Leave slack:</strong> Don't pull cables tight - allow for movement</li>
+        </ul>
+        <h3 style="margin-top: 20px;">Critical Connections</h3>
+        <div class="component-grid">
+          <div class="component-item"><strong>24-pin ATX</strong>Main motherboard power</div>
+          <div class="component-item"><strong>CPU 8-pin</strong>Dedicated CPU power (top left of board)</div>
+          <div class="component-item"><strong>GPU Power</strong>6-pin or 8-pin PCIe power (if required)</div>
+          <div class="component-item"><strong>SATA Power</strong>Power for HDD/SSD/optical drive</div>
+          <div class="component-item"><strong>SATA Data</strong>Data connection to motherboard</div>
+          <div class="component-item"><strong>Front Panel</strong>Power switch, reset, LEDs, USB, audio</div>
+        </div>
+        <div class="safety-box">
+          <h4>Why Cable Management Matters</h4>
+          <p>Good cable management improves airflow, reduces temperatures, makes troubleshooting easier, and prevents cables from being damaged by fans.</p>
+        </div>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_135420411.jpg" alt="Routing a cable at the motherboard near the CPU heatsink and RAM slots">
+        <img src="Documents/ProjectImages/slide/PXL_20261005_133227888.jpg" alt="Interior view showing fan shroud, motherboard edge and routed cables">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Step 8: Final Assembly</h2>
+      <p>Completing the reassembly</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>Final Steps</h3>
+        <ul>
+          <li><span class="step-number">1</span>Double-check all connections are secure</li>
+          <li><span class="step-number">2</span>Verify CPU cooler fan is connected</li>
+          <li><span class="step-number">3</span>Ensure no loose screws inside case</li>
+          <li><span class="step-number">4</span>Reinstall case side panel(s)</li>
+          <li><span class="step-number">5</span>Reconnect power cable and peripherals</li>
+          <li><span class="step-number">6</span>Power on and check for POST (Power-On Self-Test)</li>
+          <li><span class="step-number">7</span>Verify system boots to BIOS/OS</li>
+        </ul>
+        <h3 style="margin-top: 20px;">POST Check</h3>
+        <div class="safety-box">
+          <p><strong>What to look for:</strong> Fans spinning, no beep codes, display output, BIOS screen appears. If system doesn't boot, check connections, reseat RAM and GPU, verify CPU power is connected.</p>
+        </div>
+        <h3 style="margin-top: 20px;">Cleanup</h3>
+        <ul>
+          <li>Return all tools to their proper location</li>
+          <li>Ensure all components and screws are accounted for</li>
+          <li>Clean workstation</li>
+          <li>Submit documentation and photos</li>
+          <li>Return PC to shelf</li>
+        </ul>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_141858522.jpg" alt="Reassembled PC cabled to a monitor displaying the POST screen">
+        <img src="Documents/ProjectImages/slide/PXL_20261002_141324228.jpg" alt="Closed HP SFF tower standing upright after reassembly">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Reflection & Observations</h2>
+      <p>What did you learn from this experience?</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>What did you see when you opened the computer?</h3>
+        <div class="safety-box">
+          <p>Everything was packed much tighter than I expected. The small form factor case left almost no room to work — cables were routed flat against the chassis and components stacked around each other instead of spread out like in a full-size tower.</p>
+        </div>
+
+        <h3 style="margin-top: 20px;">Did anything surprise you?</h3>
+        <div class="safety-box">
+          <p>The RAM surprised me the most. I expected full-size DIMM sticks, but this board uses small form factor memory (SODIMM) — the shorter, laptop-style modules. Because the case is so compact, HP used laptop RAM and angled, low-profile DIMM slots to save vertical space. It showed me that "desktop" parts aren't always desktop-sized: the same memory that goes in a laptop can run a desktop when space is the main constraint.</p>
+        </div>
+
+        <h3 style="margin-top: 20px;">Did you have any problems with the disassembly?</h3>
+        <div class="safety-box">
+          <p>Working in the tight case was the hardest part. The SODIMM slots sat close to other components, so releasing the RAM clips took careful finger pressure rather than force. The CPU cooler also had to come out at an awkward angle because there wasn't clearance to lift it straight up.</p>
+        </div>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/PXL_20261005_133238333.jpg" alt="Removed WD Blue hard drive in its metal caddy with the RAM stick on the desk">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Technical Knowledge Demonstrated</h2>
+      <p>Key concepts and terminology</p>
+    </div>
+    <div class="content">
+      <div class="text-content">
+        <h3>Component Functions</h3>
+        <div class="component-grid">
+          <div class="component-item"><strong>Motherboard</strong>Central circuit board that connects and allows communication between all components</div>
+          <div class="component-item"><strong>CPU</strong>Central Processing Unit - the "brain" that executes instructions and performs calculations</div>
+          <div class="component-item"><strong>RAM</strong>Random Access Memory - temporary workspace for active programs and data</div>
+          <div class="component-item"><strong>PSU</strong>Power Supply Unit - converts AC power from wall to DC power for components</div>
+          <div class="component-item"><strong>Storage (HDD/SSD)</strong>Long-term data storage for OS, programs, and files</div>
+          <div class="component-item"><strong>GPU</strong>Graphics Processing Unit - handles rendering images and video</div>
+        </div>
+        <h3 style="margin-top: 20px;">Technical Terms Used</h3>
+        <ul>
+          <li><strong>SATA:</strong> Serial ATA - interface for storage devices</li>
+          <li><strong>PCIe:</strong> Peripheral Component Interconnect Express - expansion card slot</li>
+          <li><strong>DIMM:</strong> Dual In-line Memory Module - RAM stick form factor</li>
+          <li><strong>Thermal Paste:</strong> Heat-conductive compound between CPU and cooler</li>
+          <li><strong>Standoffs:</strong> Screws that separate motherboard from case to prevent shorts</li>
+          <li><strong>POST:</strong> Power-On Self-Test - diagnostic testing at startup</li>
+        </ul>
+      </div>
+      <div class="image-container">
+        <img src="Documents/ProjectImages/slide/PXL_20261001_141818657.jpg" alt="Motherboard closeup with CPU removed showing the empty LGA socket, DIMM slots, and CMOS battery">
+        <img src="Documents/ProjectImages/slide/IMG_4102.jpg" alt="Full interior overhead view showing motherboard, heatsink, RAM slots, chassis fan, and cabling">
+      </div>
+    </div>
+  </div>
+
+  <div class="slide title-slide">
+    <h1>Thank You</h1>
+    <h2>PC Maintenance Assignment Complete</h2>
+    <p>HP Compact SFF - Successfully Disassembled & Reassembled</p>
+    <p style="margin-top: 30px; font-size: 1.1em; color: #ccc;">All components identified, cleaned, and properly reinstalled</p>
+    <p style="margin-top: 20px; font-size: 1em; color: #888;">Questions?</p>
+  </div>
+
+</div>
+
+<div class="nav">
+  <button id="prevBtn" onclick="changeSlide(-1)">Previous</button>
+  <span class="slide-counter"><span id="current">1</span> / <span id="total">13</span></span>
+  <button id="nextBtn" onclick="changeSlide(1)">Next</button>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  document.getElementById('total').textContent = totalSlides;
+
+  function showSlide(n) {
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (n + totalSlides) % totalSlides;
+    slides[currentSlide].classList.add('active');
+    document.getElementById('current').textContent = currentSlide + 1;
+    document.getElementById('prevBtn').disabled = currentSlide === 0;
+    document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+  }
+
+  function changeSlide(direction) {
+    showSlide(currentSlide + direction);
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft') changeSlide(-1);
+    if (e.key === 'ArrowRight') changeSlide(1);
+  });
+
+  showSlide(0);
+</script>
+</body>
+</html>
